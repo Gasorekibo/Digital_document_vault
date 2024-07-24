@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+    backend:
+        build: ./backend
+        container_name: ddc_backend_c
+        volumes:
+            - ./backend:/app
+            - /app/node_modules
+        ports:
+            - '5000:5000'
+        env_file:
+            - ./backend/.env
