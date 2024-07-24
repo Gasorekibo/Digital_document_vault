@@ -1,5 +1,9 @@
 import express from 'express';
-import { uploadDocsController,getAllDocumentController } from '../controllers/uploadDoc.js';
+import {
+  uploadDocsController,
+  getAllDocumentController,
+  getAllCategorizedDocument,
+} from '../controllers/uploadDoc.js';
 import { checkSchema } from 'express-validator';
 import { uploadDocCtrl } from '../middlewares/fileValidator.js';
 import {
@@ -18,5 +22,6 @@ fileRouter.post(
 );
 
 fileRouter.get('/all', getAllDocumentController);
+fileRouter.get('/category/:category', getAllCategorizedDocument);
 
 export default fileRouter;
