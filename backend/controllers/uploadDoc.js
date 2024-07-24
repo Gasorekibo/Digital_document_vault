@@ -27,12 +27,30 @@ const getAllDocumentController = expressAsyncHandler(async (req, res) => {
   const { _id } = req.session.user;
   try {
     const files = await FileModel.find({ user: _id });
-    if(!files) {
-      res.status(404).json({ message: "No document found" });
+    if (!files || files.length === 0) {
+      res.status(404).json({ message: 'No document found' });
     }
     res.status(200).json(files);
   } catch (error) {
     res.json(error);
   }
 });
-export { uploadDocsController, getAllDocumentController };
+
+const getAllCategorizedDocument = expressAsyncHandler(async (req, res) => {
+  const { _id } = req.session.user;
+
+  try {
+    const files = await FileModel.find({
+      $and: [{ user: _id }, { category: req.params.category }],
+    });
+
+    if (!files || files.length === 0) {
+      return res.status(404).json({ message: 'No document found' });
+    }
+
+    res.status(200).json(files);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+export { uploadDocsController, getAllDocumentController, getAllCategorizedDocument };
