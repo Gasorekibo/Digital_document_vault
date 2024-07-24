@@ -6,7 +6,6 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import googleAuthRouter from './routes/auth2.js';
 import passport from 'passport';
-import postRouter from './routes/post.js';
 
 // Initialize express app
 const app = express();
@@ -14,17 +13,17 @@ app.use(express.json());
 
 // Configure session with MongoDB store
 app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    saveUninitialized: false,
-    resave: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI,
-    }),
-    cookie: {
-      maxAge: 60000 * 60 * 48, // 48 hours
-    },
-  })
+	session({
+		secret: process.env.SESSION_SECRET,
+		saveUninitialized: false,
+		resave: false,
+		store: MongoStore.create({
+			mongoUrl: process.env.MONGODB_URI,
+		}),
+		cookie: {
+			maxAge: 60000 * 60 * 48, // 48 hours
+		},
+	})
 );
 app.use(passport.initialize());
 app.use(passport.session());
@@ -38,8 +37,6 @@ createDbConnection();
 // Set up routes
 app.use('/user', userRouter);
 app.use('/auth', googleAuthRouter);
-app.use('', postRouter);
-app.set('view engine', 'ejs');
 
 /**
  * @route GET /
@@ -47,7 +44,7 @@ app.set('view engine', 'ejs');
  * @access Public
  */
 app.get('/', (req, res) => {
-  res.render('index', { title: 'Home Page', message: 'Hello, EJS!' });
+	res.send('Hello, World!');
 });
 
 /**
@@ -55,13 +52,9 @@ app.get('/', (req, res) => {
  * @description Handles file uploads
  * @access Public
  */
-app.post('/upload', upload.single('image'), (req, res) => {
-  console.log('Hello from the server');
-  res.send('Uploaded');
-});
 
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`SERVER IS STARTED AND IS RUNNING ON PORT: ${PORT}`);
+	console.log(`SERVER IS STARTED AND IS RUNNING ON PORT: ${PORT}`);
 });
