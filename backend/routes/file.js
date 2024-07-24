@@ -1,5 +1,5 @@
 import express from 'express';
-import { uploadDocsController } from '../controllers/uploadDoc.js';
+import { uploadDocsController,getAllDocumentController } from '../controllers/uploadDoc.js';
 import { checkSchema } from 'express-validator';
 import { uploadDocCtrl } from '../middlewares/fileValidator.js';
 import {
@@ -16,5 +16,7 @@ fileRouter.post(
   documentResizeMiddleware,
   uploadDocsController
 );
+
+fileRouter.get('/all', getAllDocumentController);
 
 export default fileRouter;
