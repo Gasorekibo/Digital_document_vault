@@ -23,4 +23,16 @@ const uploadDocsController = expressAsyncHandler(async (req, res) => {
   }
 });
 
-export { uploadDocsController };
+const getAllDocumentController = expressAsyncHandler(async (req, res) => {
+  const { _id } = req.session.user;
+  try {
+    const files = await FileModel.find({ user: _id });
+    if(!files) {
+      res.status(404).json({ message: "No document found" });
+    }
+    res.status(200).json(files);
+  } catch (error) {
+    res.json(error);
+  }
+});
+export { uploadDocsController, getAllDocumentController };
