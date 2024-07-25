@@ -1,8 +1,6 @@
 import { createAsyncThunk, createSlice, createAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import baseURL from '../../utils/baseUrl';
-import axiosInstance from '../../utils/axiosInstance'
-
 //Create doc action
 export const redirectAfterDocsCreation = createAction('redirect/AfterCreation');
 export const redirectAfterDocsUpdated = createAction('redirect/AfterUpdated');
@@ -11,18 +9,30 @@ export const redirectAfterDocsDeleted = createAction('redirect/AfterDeleted');
 export const uploadDocumentAction = createAsyncThunk(
   'doc/upload',
   async (doc, { rejectWithValue, getState, dispatch }) => {
+    const user = getState()?.user;
+    const { auth } = user;
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    };
     try {
       //http call
-      const {user} = JSON.parse(localStorage.getItem("userInfo"))
+      // const {user} = JSON.parse(localStorage.getItem("userInfo"))
       const formData = new FormData();
       formData.append('filename', doc?.filename);
       formData.append('category', doc?.category);
       formData.append('image', doc?.image);
-      const { data } = await axiosInstance.post('/file/upload', {...formData, user});
+      const { data } = await axios.post(
+        baseURL + '/file/upload',
+        formData,
+        config
+      );
       dispatch(redirectAfterDocsCreation());
       return data;
     } catch (error) {
-      console.log(error);
+      console.log('error ' + error);
       if (!error?.response) throw error;
       return rejectWithValue(error?.response?.data);
     }
