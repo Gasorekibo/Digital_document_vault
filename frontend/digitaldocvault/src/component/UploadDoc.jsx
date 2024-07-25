@@ -19,11 +19,9 @@ function UploadDoc() {
 
   //select store data
   const docs = useSelector((state) => state?.docs);
-  console.log(docs)
   const { isCreated, loading, appErr, serverErr } = docs;
   const user = useSelector((state) => state?.user);
   const { auth } = user;
-
   //formik
   const formik = useFormik({
     initialValues: {
@@ -32,7 +30,6 @@ function UploadDoc() {
       image: null,
     },
     onSubmit: (values) => {
-      console.log(values);
       dispatch(
         uploadDocumentAction({
           filename: values.filename,
