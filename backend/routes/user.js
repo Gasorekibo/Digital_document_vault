@@ -53,6 +53,6 @@ router.post(
  * @returns {Array.<object>} 200 - An array of all registered users
  * @returns {Error}  500 - Server error
  */
-router.post('/', authenticateJWT, getAllUsers);
+router.get('/', authenticateJWT, getAllUsers);
 
 export default router;
