@@ -1,9 +1,10 @@
 import React from 'react';
-
+import Navigation from './Navigation';
 function UploadDoc() {
   return (
-    <div className="mt-8 sm:mx-auto w-2/6">
-      <div className="bg-white py-8 px-4 sm:rounded-lg sm:px-10 lg:w-[80%] lg:mx-auto shadow-md rounded-md my-20">
+    <div className="mt-8 sm:mx-auto grid grid-cols-5">
+      <Navigation />
+      <div className="bg-white py-8 px-4 sm:rounded-lg sm:px-10 lg:w-[80%] lg:mx-auto shadow-md rounded-md col-start-3 col-span-2 h-2/4 ">
         <form onSubmit={() => {}} className="space-y-6">
           <div>
             <label
