@@ -6,17 +6,17 @@ import Login from './component/Login.jsx';
 import UploadDoc from './component/UploadDoc.jsx';
 import Navigation from './component/Navigation.jsx';
 function App() {
-  return (
-    <BrowserRouter>
-    <Navigation/>
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/user/register" element={<Register />} />
-        <Route path="/user/login" element={<Login />} />
-        <Route path="/docs/upload" element={<UploadDoc />} />
-      </Routes>
-    </BrowserRouter>
-  );
+	return (
+		<BrowserRouter>
+			<Navigation />
+			<Routes>
+				<Route path="/" element={<Homepage />} />
+				<Route path="/user/register" element={<Register />} />
+				<Route path="/user/login" element={<Login />} />
+				<Route path="/docs/upload" element={<UploadDoc />} />
+			</Routes>
+		</BrowserRouter>
+	);
 }
 
 export default App;
