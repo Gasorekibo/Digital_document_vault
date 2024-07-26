@@ -49,7 +49,12 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
 // Load environment variables
 dotenv.config();
 
@@ -67,7 +72,7 @@ app.use('/file', fileRouter);
  * @access Public
  */
 app.get('/', (req, res) => {
-	res.send('Hello, World!');
+  res.send('Hello, World!');
 });
 
 /**
@@ -79,5 +84,5 @@ app.get('/', (req, res) => {
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-	console.log(`SERVER IS STARTED AND IS RUNNING ON PORT: ${PORT}`);
+  console.log(`SERVER IS STARTED AND IS RUNNING ON PORT: ${PORT}`);
 });

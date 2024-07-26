@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
 import image from '../../public/image.jpg';
 export default function Homepage() {
+  
   return (
     <>
       <div className="grid grid-cols-5 gap-4 max-w-full overflow-clip pr-3 mt-6">
@@ -95,7 +95,13 @@ export default function Homepage() {
                           43234
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <span className='text-red-400 font-bold cursor-pointer'>Yes</span> / <span className='text-primary font-bold cursor-pointer'>No</span>
+                          <span className="text-red-400 font-bold cursor-pointer">
+                            Yes
+                          </span>{' '}
+                          /{' '}
+                          <span className="text-primary font-bold cursor-pointer">
+                            No
+                          </span>
                         </td>
                         <td className="px- py-4 whitespace-nowrap text-sm text-gray-500 cursor-pointer"></td>
                       </tr>

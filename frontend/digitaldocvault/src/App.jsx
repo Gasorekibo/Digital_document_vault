@@ -8,7 +8,6 @@ import Navigation from './component/Navigation.jsx';
 function App() {
 	return (
 		<BrowserRouter>
-			<Navigation />
 			<Routes>
 				<Route path="/" element={<Homepage />} />
 				<Route path="/user/register" element={<Register />} />
@@ -20,3 +19,4 @@ function App() {
 }
 
 export default App;
+//https://dribbble.com/shots/20909587-ProDeel-Compliance-Documents
