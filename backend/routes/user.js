@@ -47,7 +47,7 @@ router.post(
 );
 
 /**
- * @route GET /api/users
+ * @route GET /user
  * @description Retrieves all registered users
  * @group Users
  * @returns {Array.<object>} 200 - An array of all registered users
