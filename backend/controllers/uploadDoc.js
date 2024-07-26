@@ -5,7 +5,6 @@ import FileModel from '../models/file.js';
 // -------------- UPLOAD ------------
 
 const uploadDocsController = expressAsyncHandler(async (req, res) => {
-  const { _id } = req.session.user;
   const localPath = `public/images/document/${req.file.filename}`;
   const imgUploaded = await cloudinaryUploadPhoto(localPath);
   try {
