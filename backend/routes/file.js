@@ -10,7 +10,7 @@ import {
   documentUploadMiddleware,
   documentResizeMiddleware,
 } from '../middlewares/fileUpload.js';
-
+import { authMiddleware } from '../middlewares/authMiddleware.js';
 const fileRouter = express.Router();
 
 fileRouter.post(
@@ -18,6 +18,7 @@ fileRouter.post(
   checkSchema(uploadDocCtrl),
   documentUploadMiddleware.single('image'),
   documentResizeMiddleware,
+  authMiddleware,
   uploadDocsController
 );
 
