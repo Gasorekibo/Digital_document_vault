@@ -3,8 +3,9 @@ import Navigation from './Navigation';
 
 function Register() {
   return (
-    <div>
-      <div className="container mx-auto p-5 w-2/6 shadow-md bg-white rounded-md my-20">
+    <div className='grid grid-cols-5 mt-6'>
+        <Navigation />
+      <div className="container mx-auto p-5 w-2/6 shadow-md bg-white rounded-md mt-6 col-span-4 h-2/3">
         <h1 className="text-3xl font-bold text-center">
           <span className="text-primary">Reg</span>ister
         </h1>
