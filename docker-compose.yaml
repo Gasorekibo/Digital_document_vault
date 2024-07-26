@@ -28,6 +28,19 @@ services:
         networks:
             - app-network
 
+    frontend:
+        build: ./frontend/digitaldocvault
+        container_name: ddc_frontend_c
+        volumes:
+            - ./frontend:/app
+            - /app/node_modules
+        ports:
+            - '5000:5000'
+        depends_on:
+            - backend
+        networks:
+            - app-network
+
 networks:
     app-network:
         driver: bridge
