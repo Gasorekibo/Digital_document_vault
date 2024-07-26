@@ -5,6 +5,7 @@ import FileModel from '../models/file.js';
 // -------------- UPLOAD ------------
 
 const uploadDocsController = expressAsyncHandler(async (req, res) => {
+  const { _id } = req.user;
   const localPath = `public/images/document/${req.file.filename}`;
   const imgUploaded = await cloudinaryUploadPhoto(localPath);
   try {
@@ -13,8 +14,10 @@ const uploadDocsController = expressAsyncHandler(async (req, res) => {
       user: _id,
       file: imgUploaded?.url,
     });
-
-    // Remove saved uploaded image from local file
+    if (!file) {
+      res.status(400);
+      throw new Error('Invalid file');
+    }
     res.status(200).json(file);
     fs.unlinkSync(localPath);
   } catch (error) {
@@ -23,9 +26,9 @@ const uploadDocsController = expressAsyncHandler(async (req, res) => {
 });
 
 const getAllDocumentController = expressAsyncHandler(async (req, res) => {
-  const { _id } = req.session.user;
+  const { _id } = req.user;
   try {
-    const files = await FileModel.find({ user: _id });
+    const files = await FileModel.find({ user: _id }).populate('user');
     if (!files || files.length === 0) {
       res.status(404).json({ message: 'No document found' });
     }
@@ -36,7 +39,7 @@ const getAllDocumentController = expressAsyncHandler(async (req, res) => {
 });
 
 const getAllCategorizedDocument = expressAsyncHandler(async (req, res) => {
-  const { _id } = req.session.user;
+  const { _id } = req.user;
 
   try {
     const files = await FileModel.find({
@@ -52,8 +55,26 @@ const getAllCategorizedDocument = expressAsyncHandler(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+const deleteDocumentController = expressAsyncHandler(async (req, res) => {
+  const {_id} = req.user;
+  const {id}= req.params
+  try {
+    const document = await FileModel.findOneAndDelete({
+      $and: [{ user: _id }, { _id: id }],
+    });
+    if (!document) {
+      return res.status(404).json({ message: 'Document not found' });
+    } else {
+      return res.status(200).json({ message: 'Document deleted successfully' });
+    }
+  } catch (error) {
+    
+  }
+});
 export {
   uploadDocsController,
   getAllDocumentController,
   getAllCategorizedDocument,
+  deleteDocumentController
 };

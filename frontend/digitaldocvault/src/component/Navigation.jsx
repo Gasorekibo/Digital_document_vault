@@ -1,7 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logoutUserAction } from '../redux/slices/userSlice';
+import '../utils/i18n';
+import { useTranslation } from 'react-i18next';
+
+
 
 function Navigation() {
+  const { t } = useTranslation();
+  const user = useSelector((store) => store?.user);
+  const { auth } = user;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logoutUserAction());
+    navigate('/user/login');
+  };
+
   return (
     <nav className="bg-gray-600 p-2 shadow-2xl shadow-orange-50">
       <ul className="flex flex-col justify-between items-center gap-2">
@@ -17,26 +33,35 @@ function Navigation() {
               to={'/'}
               className="text-white p-2 cursor-pointer hover:text-primary"
             >
-              Home
+              {t('Home')}
             </Link>
             <Link
               to={'/user/register'}
               className="text-white p-2 cursor-pointer hover:text-primary"
             >
-              Register
+             { t('Register')}
             </Link>
             <Link
               to={'/user/login'}
               className="text-white p-2 cursor-pointer hover:text-primary"
             >
-              Login
+              {t('Login')}
             </Link>
             <Link
               to={'/docs/upload'}
               className="text-white p-2 cursor-pointer hover:text-primary"
             >
-              Upload Doc
+              {t('Upload Doc')}
             </Link>
+            {auth && (
+              <button
+                onClick={handleLogout}
+                className="text-white px-1 py-1 cursor-pointer hover:text-primary text-2xl bg-red-400 rounded-md"
+              >
+                {t('Logout')}
+              </button>
+            )}
+            {/* {auth && <Categories />} */}
           </ul>
         </li>
       </ul>

@@ -9,11 +9,9 @@ export const registerUserAction = createAsyncThunk(
   async (user, { rejectWithValue, getState, dispatch }) => {
     try {
       //   -------- Call backend api -------
-      const response = await axios.post(
-        `${baseURL}/user/register`,
-        user,
-        {withCredentials: true}
-      );
+      const response = await axios.post(`${baseURL}/user/register`, user, {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error) {
       console.log(error);
@@ -44,54 +42,6 @@ export const loginUserActionType = createAsyncThunk(
       );
 
       localStorage.setItem('userInfo', JSON.stringify(data));
-      return data;
-    } catch (error) {
-      if (!error?.response) {
-        throw error;
-      } else {
-        return rejectWithValue(error?.response?.data?.message);
-      }
-    }
-  }
-);
-
-// ==== get all users ===
-export const getAllUsers = createAsyncThunk(
-  'user/all',
-  async (userData, { rejectWithValue, getState, dispatch }) => {
-    try {
-      const { data } = await axios.get(`${baseURL}/user`);
-      return data;
-    } catch (error) {
-      if (!error?.response) {
-        throw error;
-      } else {
-        return rejectWithValue(error?.response?.data?.message);
-      }
-    }
-  }
-);
-
-// --------------- Delete User --------
-export const deleteUserAction = createAsyncThunk(
-  'user/delete',
-  async (userId, { rejectWithValue, getState, dispatch }) => {
-    const user = getState()?.user;
-
-    if (!user?.auth?.token) {
-      return rejectWithValue('Token is missing');
-    }
-    const { auth } = user;
-    const config = {
-      headers: {
-        Authorization: `Bearer ${auth?.token}`,
-      },
-    };
-    try {
-      const { data } = await axios.delete(
-        `${baseURL}/api/users/${userId}`,
-        config
-      );
       return data;
     } catch (error) {
       if (!error?.response) {
@@ -150,40 +100,6 @@ const userSlice = createSlice({
       state.appError = action.payload.message;
       state.serverError = action.error.message;
     });
-    // ===== Delete a single user======
-    builder.addCase(deleteUserAction.pending, (state, action) => {
-      state.loading = true;
-      state.appError = undefined;
-      state.serverError = undefined;
-    });
-    builder.addCase(deleteUserAction.fulfilled, (state, action) => {
-      state.loading = false;
-      state.userChanged = action.payload;
-      state.appError = undefined;
-      state.serverError = undefined;
-    });
-    builder.addCase(deleteUserAction.rejected, (state, action) => {
-      state.loading = false;
-      state.appError = action.payload.message;
-      state.serverError = action.error.message;
-    });
-    // ===== All Users ======
-    builder.addCase(getAllUsers.pending, (state, action) => {
-      state.loading = true;
-      state.appError = undefined;
-      state.serverError = undefined;
-    });
-    builder.addCase(getAllUsers.fulfilled, (state, action) => {
-      state.loading = false;
-      state.user = action.payload;
-      state.appError = undefined;
-      state.serverError = undefined;
-    });
-    builder.addCase(getAllUsers.rejected, (state, action) => {
-      state.loading = false;
-      state.appError = action.payload.message;
-      state.serverError = action.error.message;
-    });
     // reducers for login user.
     builder.addCase(loginUserActionType.pending, (state, action) => {
       state.loading = true;
@@ -202,7 +118,6 @@ const userSlice = createSlice({
       state.appError = action?.payload;
       state.serverError = action?.error?.message;
     });
-    /*
 
     // User logout Reducer
     builder.addCase(logoutUserAction.pending, (state, action) => {
@@ -222,7 +137,6 @@ const userSlice = createSlice({
       state.appError = action?.payload;
       state.serverError = action?.error?.message;
     });
-    */
   },
 });
 export default userSlice.reducer;
