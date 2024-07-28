@@ -6,7 +6,7 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import googleAuthRouter from './routes/auth2.js';
 import passport from 'passport';
-
+import fileRouter from './routes/file.js';
 // Initialize express app
 const app = express();
 app.use(express.json());
@@ -37,6 +37,7 @@ createDbConnection();
 // Set up routes
 app.use('/user', userRouter);
 app.use('/auth', googleAuthRouter);
+app.use('/file', fileRouter)
 
 /**
  * @route GET /
