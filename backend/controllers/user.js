@@ -1,7 +1,9 @@
-import { matchedData, validationResult } from "express-validator";
-import { comparePassword, hashPass } from "../utils/helpers.js";
-import User from "../models/user.js";
-import errorHandler from "../utils/errorHandler.js";
+import { matchedData, validationResult } from 'express-validator';
+import { comparePassword, hashPass } from '../utils/helpers.js';
+import User from '../models/user.js';
+import errorHandler from '../utils/errorHandler.js';
+import { registerUserQueue } from '../utils/producer.js';
+import { registrationWorker } from '../utils/consumer.js';
 
 /**
  * Logs in a user
@@ -10,28 +12,37 @@ import errorHandler from "../utils/errorHandler.js";
  * @returns {Promise<void>}
  */
 const loginUser = async (req, res) => {
-  try {
-    const result = validationResult(req);
+	try {
+		const result = validationResult(req);
 
-    if (!result.isEmpty()) {
-      return res.status(400).json({ error: result.errors[0].msg });
-    }
+		if (!result.isEmpty()) {
+			return res
+				.status(400)
+				.json({ error: result.errors[0].msg });
+		}
 
-    const data = matchedData(req);
+		const data = matchedData(req);
 
-    const user = await User.findOne({ email: data.email });
-    if (!user)
-      return res.status(401).json({ error: "Incorect email or password" });
-    const passwordMatches = await comparePassword(data.password, user.password);
+		const user = await User.findOne({ email: data.email });
+		if (!user)
+			return res
+				.status(401)
+				.json({ error: 'Incorect email or password' });
+		const passwordMatches = await comparePassword(
+			data.password,
+			user.password
+		);
 
-    if (!passwordMatches)
-      return res.status(401).json({ error: "Incorrect email or password" });
+		if (!passwordMatches)
+			return res
+				.status(401)
+				.json({ error: 'Incorrect email or password' });
 
-    req.session.user = user;
-    res.status(200).json({ msg: "User Loged in successfully!" });
-  } catch (error) {
-    errorHandler(req, res, error);
-  }
+		req.session.user = user;
+		res.status(200).json({ msg: 'User Loged in successfully!' });
+	} catch (error) {
+		errorHandler(req, res, error);
+	}
 };
 
 /**
@@ -41,35 +52,21 @@ const loginUser = async (req, res) => {
  * @returns {Promise<void>}
  */
 const registerUser = async (req, res) => {
-  try {
-    const result = validationResult(req);
+	try {
+		const result = validationResult(req);
 
-    if (!result.isEmpty()) {
-      return res.status(400).json({ error: result.errors[0].msg });
-    }
+		if (!result.isEmpty()) {
+			return res
+				.status(400)
+				.json({ error: result.errors[0].msg });
+		}
 
-    const data = matchedData(req);
-    const password = data.password;
+		const data = matchedData(req);
 
-    const hashedPassword = await hashPass(password);
-
-    if (!hashedPassword)
-      return res.status(500).json({ err: "Something went wrong" });
-
-    data.password = hashedPassword;
-    const newUser = await User.create(data);
-    req.session.user = newUser;
-    return res.status(201).json({
-      msg: "User registered successfully!",
-      newUser: {
-        firstname: newUser.firstname,
-        lastname: newUser.lastname,
-        email: newUser.email,
-      },
-    });
-  } catch (error) {
-    errorHandler(req, res, error);
-  }
+		await registerUserQueue(req, res, data); // Send data to the queue for processing
+	} catch (error) {
+		errorHandler(req, res, error);
+	}
 };
 
 /**
@@ -79,18 +76,18 @@ const registerUser = async (req, res) => {
  * @returns {Promise<void>}
  */
 const getAllUsers = async (req, res) => {
-  try {
-    const user = req.session.user;
+	try {
+		const user = req.session.user;
 
-    if (!user.isAdmin)
-      return res
-        .status(403)
-        .json({ error: "You are not allowed to perform this action" });
-    const users = await User.find({}, "firstname lastname email");
-    if (users) res.status(200).json({ users });
-  } catch (error) {
-    errorHandler(req, res, error);
-  }
+		if (!user.isAdmin)
+			return res.status(403).json({
+				error: 'You are not allowed to perform this action',
+			});
+		const users = await User.find({}, 'firstname lastname email');
+		if (users) res.status(200).json({ users });
+	} catch (error) {
+		errorHandler(req, res, error);
+	}
 };
 
 export { loginUser, registerUser, getAllUsers };
