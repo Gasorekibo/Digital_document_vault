@@ -8,26 +8,45 @@ import googleAuthRouter from './routes/auth2.js';
 import passport from 'passport';
 import fileRouter from './routes/file.js';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 // Initialize express app
 const app = express();
 app.use(express.json());
 
+app.use(cookieParser());
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+const allowedOrigins = ['http://127.0.0.1:5500'];
+
+app.use(
+	cors({
+		origin: allowedOrigins,
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+		// allowedHeaders: ['Content-Type', 'Authorization'],
+		credentials: true, // Allow credentials
+	})
+);
+
 // Configure session with MongoDB store
 app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    saveUninitialized: false,
-    resave: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI,
-    }),
-    cookie: {
-      secure: false,
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
-      sameSite: 'lax',
-    },
-  })
+	session({
+		secret: process.env.SESSION_SECRET,
+		saveUninitialized: false,
+		resave: false,
+		store: MongoStore.create({
+			mongoUrl: process.env.MONGODB_URI,
+		}),
+		cookie: {
+			maxAge: 60000 * 60 * 48, // 48 hours
+			secure: false, // Set to true if using HTTPS
+			sameSite: 'lax', // Adjust based on needs
+		},
+	})
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(

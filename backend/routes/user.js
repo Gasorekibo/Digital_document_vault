@@ -1,10 +1,15 @@
-import express from "express";
-import { getAllUsers, loginUser, registerUser } from "../controllers/user.js";
-import { checkSchema } from "express-validator";
+import express from 'express';
 import {
-  loginUserValidator,
-  createUserValidator,
-} from "../middlewares/userValidator.js";
+	getAllUsers,
+	loginUser,
+	registerUser,
+} from '../controllers/user.js';
+import { checkSchema } from 'express-validator';
+import {
+	loginUserValidator,
+	createUserValidator,
+} from '../middlewares/userValidator.js';
+import { authenticateJWT } from '../utils/helpers.js';
 
 const router = express.Router();
 
@@ -21,7 +26,7 @@ const router = express.Router();
  * @returns {Error}  400 - Validation error
  * @returns {Error}  401 - Unauthorized
  */
-router.post("/login", checkSchema(loginUserValidator), loginUser);
+router.post('/login', checkSchema(loginUserValidator), loginUser);
 
 /**
  * @route POST /api/users/register
@@ -35,7 +40,11 @@ router.post("/login", checkSchema(loginUserValidator), loginUser);
  * @returns {object} 201 - The registered user object
  * @returns {Error}  400 - Validation error
  */
-router.post("/register", checkSchema(createUserValidator), registerUser);
+router.post(
+	'/register',
+	checkSchema(createUserValidator),
+	registerUser
+);
 
 /**
  * @route GET /api/users
@@ -44,6 +53,6 @@ router.post("/register", checkSchema(createUserValidator), registerUser);
  * @returns {Array.<object>} 200 - An array of all registered users
  * @returns {Error}  500 - Server error
  */
-router.get("/", getAllUsers);
+router.post('/', authenticateJWT, getAllUsers);
 
 export default router;

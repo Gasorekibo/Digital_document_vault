@@ -1,4 +1,5 @@
-import bcryptjs from "bcryptjs";
+import bcryptjs from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 /**
  * Hashes a password using bcrypt.
@@ -9,9 +10,9 @@ import bcryptjs from "bcryptjs";
  * @throws {Error} - If hashing fails.
  */
 const hashPass = async (password) => {
-  const salt = await bcryptjs.genSalt();
-  const hashedPassword = await bcryptjs.hash(password, salt);
-  return hashedPassword;
+	const salt = await bcryptjs.genSalt();
+	const hashedPassword = await bcryptjs.hash(password, salt);
+	return hashedPassword;
 };
 
 /**
@@ -24,8 +25,44 @@ const hashPass = async (password) => {
  * @throws {Error} - If comparison fails.
  */
 const comparePassword = async (password, hashedPassword) => {
-  const passwordMatches = await bcryptjs.compare(password, hashedPassword);
-  return passwordMatches;
+	const passwordMatches = await bcryptjs.compare(
+		password,
+		hashedPassword
+	);
+	return passwordMatches;
 };
 
-export { hashPass, comparePassword };
+/**
+ * Middleware to authenticate JWT.
+ * @async
+ * @function authenticateJWT
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @param {function} next - The next middleware function.
+ * @returns {void}
+ * @throws {Error} - If authentication fails.
+ */
+const authenticateJWT = async (req, res, next) => {
+	console.log(req.headers);
+	const authHeader = req.headers['authorization'];
+	const JWT_SECRET_KEY = process.env.JWT_SECRET;
+
+	if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		return res
+			.status(401)
+			.json({ message: 'Access denied. No token provided.' });
+	}
+
+	const token = authHeader.split(' ')[1];
+	console.log(`RECEIVED TOKEN: ${token} `);
+
+	try {
+		const decoded = await jwt.verify(token, JWT_SECRET_KEY);
+		req.userId = decoded.id;
+		next();
+	} catch (err) {
+		res.status(403).json({ message: 'Invalid token' });
+	}
+};
+
+export { hashPass, comparePassword, authenticateJWT };
