@@ -53,4 +53,8 @@ const getAllCategorizedDocument = expressAsyncHandler(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-export { uploadDocsController, getAllDocumentController, getAllCategorizedDocument };
+export {
+  uploadDocsController,
+  getAllDocumentController,
+  getAllCategorizedDocument,
+};
