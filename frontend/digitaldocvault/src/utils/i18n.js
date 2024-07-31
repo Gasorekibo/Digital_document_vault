@@ -53,10 +53,14 @@ i18n.use(initReactI18next).init({
         "Name":"Name",
         Uploaded:'Uploaded',
         education :"education",
+        Education :"Education",
         driving:"driving",
+        Driving:"Driving",
         land:"land",
+        Land:"Land",
         'cmu application':"cmu application",
-        Download:"Download"
+        Download:"Download",
+        "Coding certificate":"Coding certificate"
 
       },
     },
@@ -67,11 +71,15 @@ i18n.use(initReactI18next).init({
         'Image is required': 'Image est requise',
         // ... other translations
         Login: "S'identifier",
+        "Coding certificate":"Certificat de codage",
         Download:"Télécharger",
         Uploaded:"Téléchargé",
         education :"éducation",
+        Education :"Education",
         driving:"conduite",
+        Driving:"Conduite",
         land:"terrain",
+        Land:"Terrain",
         'cmu application':"application cmu",
         "Name":"Nom",
         "Updated At":"Mis à jour le",
