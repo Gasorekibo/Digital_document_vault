@@ -14,31 +14,72 @@ import { authenticateJWT } from '../utils/helpers.js';
 const router = express.Router();
 
 /**
- * Loging in user route
- * @route POST /api/users/login
- * @description Handles user login
- * @group Users
- * @param {object} req.body - The request body containing user credentials
- * @param {string} req.body.email - The user's email
- * @param {string} req.body.password - The user's password
- * @middleware {checkSchema(loginUserValidator)} - Validates the login request body
- * @returns {object} 200 - The authenticated user object
- * @returns {Error}  400 - Validation error
- * @returns {Error}  401 - Unauthorized
+ * @swagger
+ * /user/login:
+ *   post:
+ *     summary: Log in a user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "password123"
+ *     responses:
+ *       200:
+ *         description: The authenticated user object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
  */
 router.post('/login', checkSchema(loginUserValidator), loginUser);
 
 /**
- * @route POST /api/users/register
- * @description Handles user registration
- * @group Users
- * @param {object} req.body - The request body containing user details
- * @param {string} req.body.name - The user's name
- * @param {string} req.body.email - The user's email
- * @param {string} req.body.password - The user's password
- * @middleware {checkSchema(createUserValidator)} - Validates the registration request body
- * @returns {object} 201 - The registered user object
- * @returns {Error}  400 - Validation error
+ * @swagger
+ * /user/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstname:
+ *                 type: string
+ *                 example: "John"
+ *               lastname:
+ *                 type: string
+ *                 example: "Doe"
+ *               email:
+ *                 type: string
+ *                 example: "john.doe@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "password123"
+ *     responses:
+ *       201:
+ *         description: The registered user object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       400:
+ *         description: Validation error
  */
 router.post(
 	'/register',
@@ -47,11 +88,22 @@ router.post(
 );
 
 /**
- * @route GET /user
- * @description Retrieves all registered users
- * @group Users
- * @returns {Array.<object>} 200 - An array of all registered users
- * @returns {Error}  500 - Server error
+ * @swagger
+ * /user:
+ *   get:
+ *     summary: Retrieve all registered users
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: An array of all registered users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       500:
+ *         description: Server error
  */
 router.get('/', authenticateJWT, getAllUsers);
 

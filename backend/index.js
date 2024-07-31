@@ -15,6 +15,8 @@ import User from './models/user.js';
 import i18next from 'i18next';
 import i18nextBackend from 'i18next-fs-backend';
 import i18nextMiddleware from 'i18next-http-middleware';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 
 i18next
 	.use(i18nextBackend)
@@ -27,6 +29,34 @@ i18next
 	});
 // Initialize express app
 const app = express();
+
+const swaggerDefinition = {
+	openapi: '3.0.0',
+	info: {
+		title: 'My API',
+		version: '1.0.0',
+		description: 'A description of my API',
+	},
+	servers: [
+		{
+			url: 'http://localhost:3000',
+			description: 'Local server',
+		},
+	],
+};
+
+// Options for the swagger docs
+const options = {
+	swaggerDefinition,
+	apis: ['./routes/*.js'], // Path to the API docs
+};
+
+// Initialize swagger-jsdoc
+const swaggerSpec = swaggerJsdoc(options);
+
+// Set up Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.use(i18nextMiddleware.handle(i18next));
 app.use(express.json());
 
@@ -35,7 +65,10 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const allowedOrigins = ['http://127.0.0.1:5500', 'http://localhost:5173'];
+const allowedOrigins = [
+	'http://127.0.0.1:5500',
+	'http://localhost:5173',
+];
 
 app.use(
 	cors({
