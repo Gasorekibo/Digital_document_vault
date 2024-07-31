@@ -35,13 +35,13 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const allowedOrigins = ['http://127.0.0.1:5500'];
+const allowedOrigins = ['http://127.0.0.1:5500', 'http://localhost:5173'];
 
 app.use(
 	cors({
 		origin: allowedOrigins,
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-		// allowedHeaders: ['Content-Type', 'Authorization'],
+		allowedHeaders: ['Content-Type', 'Authorization'],
 		credentials: true, // Allow credentials
 	})
 );

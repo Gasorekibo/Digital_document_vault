@@ -3,6 +3,7 @@ import {
   uploadDocsController,
   getAllDocumentController,
   getAllCategorizedDocument,
+  deleteDocumentController,
 } from '../controllers/uploadDoc.js';
 import { checkSchema } from 'express-validator';
 import { uploadDocCtrl } from '../middlewares/fileValidator.js';
@@ -15,14 +16,19 @@ const fileRouter = express.Router();
 
 fileRouter.post(
   '/upload',
+  authMiddleware,
   checkSchema(uploadDocCtrl),
   documentUploadMiddleware.single('image'),
   documentResizeMiddleware,
-  authMiddleware,
   uploadDocsController
 );
 
-fileRouter.get('/all', getAllDocumentController);
-fileRouter.get('/category/:category', getAllCategorizedDocument);
+fileRouter.get('/all', authMiddleware, getAllDocumentController);
+fileRouter.get(
+  '/category/:category',
+  authMiddleware,
+  getAllCategorizedDocument
+);
+fileRouter.delete('/delete/:id', authMiddleware, deleteDocumentController);
 
 export default fileRouter;

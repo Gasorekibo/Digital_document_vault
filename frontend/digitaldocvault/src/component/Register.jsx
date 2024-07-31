@@ -10,8 +10,7 @@ const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const store = useSelector((store) => store?.user);
-  const { user, loading } = store;
-
+  const { auth, loading } = store;
   const formSchema = Yup.object({
     firstname: Yup.string().required('Firstname is Required'),
     lastname: Yup.string().required('Lastname is Required'),
@@ -31,7 +30,7 @@ const Register = () => {
     },
   });
   useEffect(()=> {
-    if (user) {
+    if (auth) {
       navigate(`/`);
     }
   },[])

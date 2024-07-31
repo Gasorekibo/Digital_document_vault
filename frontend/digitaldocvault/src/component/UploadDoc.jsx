@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navigation from './Navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadDocumentAction } from '../redux/slices/documentSlice';
+import '../utils/i18n';
+import { useTranslation } from 'react-i18next';
 
 //Form schema
 const formSchema = Yup.object({
@@ -16,10 +18,13 @@ const formSchema = Yup.object({
 function UploadDoc() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   //select store data
   const docs = useSelector((state) => state?.docs);
-  const { isCreated, loading, appErr, serverErr } = docs;
+  const { isCreated, docLists, loading } = docs;
+  const allCategory = [...new Set(docLists?.map((ele) => ele?.category))];
+
   const user = useSelector((state) => state?.user);
   const { auth } = user;
   //formik
@@ -29,18 +34,23 @@ function UploadDoc() {
       category: '',
       image: null,
     },
-    onSubmit: (values) => {
-      dispatch(
+    onSubmit: async (values) => {
+      const data = await dispatch(
         uploadDocumentAction({
           filename: values.filename,
           category: values.category,
           image: values.image,
         })
       );
+      console.log(data);
     },
     validationSchema: formSchema,
   });
-
+  useEffect(() => {
+    if (!auth) {
+      navigate(`/user/login`);
+    }
+  });
   //redirect
   if (isCreated) navigate('/');
 
@@ -54,7 +64,7 @@ function UploadDoc() {
               htmlFor="filename"
               className="block text-sm font-medium text-gray-700"
             >
-              File name
+              {t('File Name')}
             </label>
             <div className="mt-1">
               <input
@@ -67,7 +77,7 @@ function UploadDoc() {
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
               {formik.touched.filename && formik.errors.filename ? (
-                <div className="text-red-600">{formik.errors.filename}</div>
+                <div className="text-red-600">{t(formik.errors.filename)}</div>
               ) : null}
             </div>
           </div>
@@ -76,7 +86,7 @@ function UploadDoc() {
               htmlFor="category"
               className="block text-sm font-medium text-gray-700"
             >
-              Select Category
+              {t('Select Category')}
             </label>
             <select
               id="category"
@@ -87,12 +97,14 @@ function UploadDoc() {
               className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
               <option value="">Document Category</option>
-              <option value="Category 1">Category 1</option>
-              <option value="Category 2">Category 2</option>
-              <option value="Category 3">Category 3</option>
+              {allCategory?.map((category, idx) => (
+                <option key={idx} value={category}>
+                  {category}
+                </option>
+              ))}
             </select>
             {formik.touched.category && formik.errors.category ? (
-              <div className="text-red-600">{formik.errors.category}</div>
+              <div className="text-red-600">{t(formik.errors.category)}</div>
             ) : null}
           </div>
           <div>
@@ -100,7 +112,7 @@ function UploadDoc() {
               htmlFor="image"
               className="block text-sm font-medium mt-3 mb-2 text-gray-700"
             >
-              Select image to upload
+              {t('Select image to upload')}
             </label>
             <input
               id="image"
@@ -113,14 +125,14 @@ function UploadDoc() {
               className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
             {formik.touched.image && formik.errors.image ? (
-              <div className="text-red-600">{formik.errors.image}</div>
+              <div className="text-red-600">{t(formik.errors.image)}</div>
             ) : null}
           </div>
           <button
             type="submit"
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-btnhover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Upload
+            {loading ? 'Loading ...' : 'Upload'}
           </button>
         </form>
       </div>

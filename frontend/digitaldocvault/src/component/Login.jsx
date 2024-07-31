@@ -10,7 +10,7 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const store = useSelector((store) => store?.user);
-  const { userAuth, loading } = store;
+  const { userAuth, loading, auth } = store;
   const formSchema = Yup.object({
     email: Yup.string().email('Invalid email').required('Email Is Required'),
     password: Yup.string().required('Password is Required'),
@@ -21,13 +21,18 @@ function Login() {
       password: '',
     },
     validationSchema: formSchema,
-    onSubmit: (values) => {
-      dispatch(loginUserActionType(values));
-      navigate('/');
+    onSubmit: async(values) => {
+      const data = await dispatch(loginUserActionType(values));
+      const {payload} = data;
+      if(payload){
+        navigate(`/`);
+      }else {
+        alert('Invalid Credentials');
+      }
     },
   });
   useEffect(() => {
-    if (userAuth) {
+    if (userAuth || auth) {
       navigate(`/`);
     }
   }, []);
