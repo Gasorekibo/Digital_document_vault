@@ -50,7 +50,9 @@ const authenticateJWT = async (req, res, next) => {
 	if (!authHeader || !authHeader.startsWith('Bearer ')) {
 		return res
 			.status(401)
-			.json({ message: 'Access denied. No token provided.' });
+			.json({
+				message: req.t('Access denied. No token provided.'),
+			});
 	}
 
 	const token = authHeader.split(' ')[1];
@@ -61,7 +63,7 @@ const authenticateJWT = async (req, res, next) => {
 		req.userId = decoded.id;
 		next();
 	} catch (err) {
-		res.status(403).json({ message: 'Invalid token' });
+		res.status(403).json({ message: req.t('Invalid token') });
 	}
 };
 
